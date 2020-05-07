@@ -1,0 +1,4 @@
+.idea/
+tmp/
+examples/example
+examples/**/*.svg
