@@ -1,7 +1,7 @@
 package gorough
 
 import (
-	"strconv"
+	"github.com/NovikovRoman/gorough/data_parser"
 )
 
 type rectangle struct {
@@ -20,9 +20,9 @@ func (r rectangle) Operations() []operation {
 func (r rectangle) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       r.options.Styles.Stroke,
-		"stroke-width": strconv.FormatFloat(r.options.Styles.StrokeWidth, 'f', -1, 64),
+		"stroke-width": data_parser.FloatToString(r.options.Styles.StrokeWidth),
 		"fill":         r.options.Styles.Fill,
-		"fill-weight":  strconv.FormatFloat(r.options.Styles.FillWeight, 'f', -1, 64),
+		"fill-weight":  data_parser.FloatToString(r.options.Styles.FillWeight),
 	}
 }
 

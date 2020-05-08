@@ -1,7 +1,7 @@
 package gorough
 
 import (
-	"strconv"
+	"github.com/NovikovRoman/gorough/data_parser"
 )
 
 type poligon struct {
@@ -20,9 +20,9 @@ func (p poligon) Operations() []operation {
 func (p poligon) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       p.options.Styles.Stroke,
-		"stroke-width": strconv.FormatFloat(p.options.Styles.StrokeWidth, 'f', -1, 64),
+		"stroke-width": data_parser.FloatToString(p.options.Styles.StrokeWidth),
 		"fill":         p.options.Styles.Fill,
-		"fill-weight":  strconv.FormatFloat(p.options.Styles.FillWeight, 'f', -1, 64),
+		"fill-weight":  data_parser.FloatToString(p.options.Styles.FillWeight),
 	}
 }
 

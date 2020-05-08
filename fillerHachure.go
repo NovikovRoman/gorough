@@ -120,11 +120,11 @@ func (f hachureFiller) splitOnIntersections(polygon []Point, segment Line) []Lin
 			ips[i] = v.point
 		}
 
-		if !IsPointInPolygon(polygon, segment.P1.X, segment.P2.Y) {
+		if !IsPointInPolygon(polygon, segment.P1) {
 			ips = ips[1:]
 		}
 
-		if !IsPointInPolygon(polygon, segment.P2.X, segment.P2.Y) {
+		if !IsPointInPolygon(polygon, segment.P2) {
 			if len(ips) > 2 {
 				ips = ips[:len(ips)-2]
 			} else {
@@ -165,5 +165,5 @@ func (f hachureFiller) splitOnIntersections(polygon []Point, segment Line) []Lin
 }
 
 func (f hachureFiller) midPointInPolygon(polygon []Point, segment Line) bool {
-	return IsPointInPolygon(polygon, (segment.P1.X+segment.P2.X)/2, (segment.P1.Y+segment.P2.Y)/2)
+	return IsPointInPolygon(polygon, Point{(segment.P1.X + segment.P2.X) / 2, (segment.P1.Y + segment.P2.Y) / 2})
 }

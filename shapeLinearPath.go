@@ -1,7 +1,7 @@
 package gorough
 
 import (
-	"strconv"
+	"github.com/NovikovRoman/gorough/data_parser"
 )
 
 type linearPath struct {
@@ -20,7 +20,7 @@ func (l linearPath) Operations() []operation {
 func (l linearPath) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       l.options.Styles.Stroke,
-		"stroke-width": strconv.FormatFloat(l.options.Styles.StrokeWidth, 'f', -1, 64),
+		"stroke-width": data_parser.FloatToString(l.options.Styles.StrokeWidth),
 	}
 }
 

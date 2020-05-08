@@ -1,7 +1,7 @@
 package gorough
 
 import (
-	"strconv"
+	"github.com/NovikovRoman/gorough/data_parser"
 )
 
 type ellipse struct {
@@ -20,9 +20,9 @@ func (e ellipse) Operations() []operation {
 func (e ellipse) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       e.options.Styles.Stroke,
-		"stroke-width": strconv.FormatFloat(e.options.Styles.StrokeWidth, 'f', -1, 64),
+		"stroke-width": data_parser.FloatToString(e.options.Styles.StrokeWidth),
 		"fill":         e.options.Styles.Fill,
-		"fill-weight":  strconv.FormatFloat(e.options.Styles.FillWeight, 'f', -1, 64),
+		"fill-weight":  data_parser.FloatToString(e.options.Styles.FillWeight),
 	}
 }
 

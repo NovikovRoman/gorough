@@ -1,6 +1,8 @@
 package gorough
 
-import "strconv"
+import (
+	"github.com/NovikovRoman/gorough/data_parser"
+)
 
 type line struct {
 	options    *LineOptions
@@ -18,7 +20,7 @@ func (l line) Operations() []operation {
 func (l line) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       l.options.Styles.Stroke,
-		"stroke-width": strconv.FormatFloat(l.options.Styles.StrokeWidth, 'f', -1, 64),
+		"stroke-width": data_parser.FloatToString(l.options.Styles.StrokeWidth),
 	}
 }
 

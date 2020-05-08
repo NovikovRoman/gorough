@@ -4,7 +4,6 @@ import (
 	"github.com/NovikovRoman/gorough/data_parser"
 	"github.com/ajstarks/svgo"
 	"math"
-	"strconv"
 )
 
 func DrawSVG(s *svg.SVG, d Drawable, groupAttrs Attributes) {
@@ -41,7 +40,7 @@ func DrawSVG(s *svg.SVG, d Drawable, groupAttrs Attributes) {
 			s.Path(
 				operationToPath(op),
 				"stroke='"+d.Styles().Fill+"'",
-				"stroke-width='"+strconv.FormatFloat(fweight, 'f', -1, 64)+"'",
+				"stroke-width='"+data_parser.FloatToString(fweight)+"'",
 				"fill='none'",
 				attr.String(),
 			)

@@ -5,11 +5,15 @@ import (
 	"github.com/ajstarks/svgo"
 	"log"
 	"math"
+	"math/rand"
 	"os"
+	"time"
 )
 
 func main() {
 	var err error
+
+	rand.Seed(time.Now().UnixNano())
 
 	if err = hodgepodge(); err != nil {
 		log.Fatalln(err)

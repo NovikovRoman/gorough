@@ -87,21 +87,20 @@ func LineIntersection(a, b, c, d Point) (Point, bool) {
 	}, true
 }
 
-func IsPointInPolygon(points []Point, x, y float64) bool {
+func IsPointInPolygon(points []Point, point Point) bool {
 	vertices := len(points)
 	if vertices < 3 {
 		return false
 	}
 
-	extreme := Point{X: float64(int(^uint(0) >> 1)), Y: y}
-	p := Point{X: x, Y: y}
+	extreme := Point{X: float64(int(^uint(0) >> 1)), Y: point.Y}
 	count := 0
 	for i := 0; i < vertices; i++ {
 		current := points[i]
 		next := points[(i+1)%vertices]
-		if DoIntersect(current, next, p, extreme) {
-			if orientation(current, p, next) == 0 {
-				return onSegment(current, p, next)
+		if DoIntersect(current, next, point, extreme) {
+			if orientation(current, point, next) == 0 {
+				return onSegment(current, point, next)
 			}
 			count++
 		}

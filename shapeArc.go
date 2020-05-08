@@ -1,7 +1,7 @@
 package gorough
 
 import (
-	"strconv"
+	"github.com/NovikovRoman/gorough/data_parser"
 )
 
 type arc struct {
@@ -20,9 +20,9 @@ func (a arc) Operations() []operation {
 func (a arc) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       a.options.Styles.Stroke,
-		"stroke-width": strconv.FormatFloat(a.options.Styles.StrokeWidth, 'f', -1, 64),
+		"stroke-width": data_parser.FloatToString(a.options.Styles.StrokeWidth),
 		"fill":         a.options.Styles.Fill,
-		"fill-weight":  strconv.FormatFloat(a.options.Styles.FillWeight, 'f', -1, 64),
+		"fill-weight":  data_parser.FloatToString(a.options.Styles.FillWeight),
 	}
 }
 

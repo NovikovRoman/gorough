@@ -1,7 +1,6 @@
 package gorough
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"strings"
@@ -81,29 +80,31 @@ func oneLine(p1 Point, p2 Point, move bool, overlay bool, opt *PenOptions) (comm
 	}
 
 	if overlay {
+		offsetOptValue := offsetOpt(halfOffset, opt.Roughness, roughnessGain)
 		commands = append(commands, command{
 			code: commandCurveTo,
 			data: []float64{
-				midDispX + p1.X + (p2.X-p1.X)*divergePoint + offsetOpt(halfOffset, opt.Roughness, roughnessGain),
-				midDispY + p1.Y + (p2.Y-p1.Y)*divergePoint + offsetOpt(halfOffset, opt.Roughness, roughnessGain),
-				midDispX + p1.X + 2*(p2.X-p1.X)*divergePoint + offsetOpt(halfOffset, opt.Roughness, roughnessGain),
-				midDispY + p1.Y + 2*(p2.Y-p1.Y)*divergePoint + offsetOpt(halfOffset, opt.Roughness, roughnessGain),
-				p2.X + offsetOpt(halfOffset, opt.Roughness, roughnessGain),
-				p2.Y + offsetOpt(halfOffset, opt.Roughness, roughnessGain),
+				midDispX + p1.X + (p2.X-p1.X)*divergePoint + offsetOptValue,
+				midDispY + p1.Y + (p2.Y-p1.Y)*divergePoint + offsetOptValue,
+				midDispX + p1.X + 2*(p2.X-p1.X)*divergePoint + offsetOptValue,
+				midDispY + p1.Y + 2*(p2.Y-p1.Y)*divergePoint + offsetOptValue,
+				p2.X + offsetOptValue,
+				p2.Y + offsetOptValue,
 			},
 		})
 		return
 	}
 
+	offsetOptValue := offsetOpt(offset, opt.Roughness, roughnessGain)
 	commands = append(commands, command{
 		code: commandCurveTo,
 		data: []float64{
-			midDispX + p1.X + (p2.X-p1.X)*divergePoint + offsetOpt(offset, opt.Roughness, roughnessGain),
-			midDispY + p1.Y + (p2.Y-p1.Y)*divergePoint + offsetOpt(offset, opt.Roughness, roughnessGain),
-			midDispX + p1.X + 2*(p2.X-p1.X)*divergePoint + offsetOpt(offset, opt.Roughness, roughnessGain),
-			midDispY + p1.Y + 2*(p2.Y-p1.Y)*divergePoint + offsetOpt(offset, opt.Roughness, roughnessGain),
-			p2.X + offsetOpt(offset, opt.Roughness, roughnessGain),
-			p2.Y + offsetOpt(offset, opt.Roughness, roughnessGain),
+			midDispX + p1.X + (p2.X-p1.X)*divergePoint + offsetOptValue,
+			midDispY + p1.Y + (p2.Y-p1.Y)*divergePoint + offsetOptValue,
+			midDispX + p1.X + 2*(p2.X-p1.X)*divergePoint + offsetOptValue,
+			midDispY + p1.Y + 2*(p2.Y-p1.Y)*divergePoint + offsetOptValue,
+			p2.X + offsetOptValue,
+			p2.Y + offsetOptValue,
 		},
 	})
 	return
@@ -120,17 +121,7 @@ func offset(min float64, max float64, roughness float64, roughnessGain float64) 
 func operationToPath(op operation) string {
 	path := make([]string, len(op.commands))
 	for i, c := range op.commands {
-		switch c.code {
-		case commandMove:
-			path[i] = fmt.Sprintf("M%g %g", c.data[0], c.data[1])
-
-		case commandCurveTo:
-			path[i] = fmt.Sprintf(
-				"C%g %g, %g %g, %g %g", c.data[0], c.data[1], c.data[2], c.data[3], c.data[4], c.data[5])
-
-		case commandLineTo:
-			path[i] = fmt.Sprintf("L%g %g", c.data[0], c.data[1])
-		}
+		path[i] = c.String()
 	}
 	return strings.Join(path, "")
 }

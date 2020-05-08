@@ -14,6 +14,16 @@ const (
 	EOD
 )
 
+var (
+	commandParams = map[string]int{
+		"A": 7, "a": 7, "C": 6, "c": 6, "H": 1, "h": 1, "L": 2, "l": 2, "M": 2, "m": 2, "Q": 4, "q": 4, "S": 4,
+		"s": 4, "T": 2, "t": 2, "V": 1, "v": 1, "Z": 0, "z": 0}
+
+	reGarbage = regexp.MustCompile(`(?s)^([ \t\r\n,]+)`)
+	reCommand = regexp.MustCompile(`(?s)^([aAcChHlLmMqQsStTvVzZ])`)
+	reNumber  = regexp.MustCompile(`(?s)^(([-+]?[0-9]+(\.[0-9]*)?|[-+]?\.[0-9]+)([eE][-+]?[0-9]+)?)`)
+)
+
 type pathToken struct {
 	tokenType int
 	text      string
@@ -25,15 +35,47 @@ type Segment struct {
 	Data []float64
 }
 
-var (
-	commandParams = map[string]int{
-		"A": 7, "a": 7, "C": 6, "c": 6, "H": 1, "h": 1, "L": 2, "l": 2, "M": 2, "m": 2, "Q": 4, "q": 4, "S": 4,
-		"s": 4, "T": 2, "t": 2, "V": 1, "v": 1, "Z": 0, "z": 0}
+func (s Segment) String() string {
+	var tokens []string
+	tokens = append(tokens, s.Key)
 
-	reGarbage = regexp.MustCompile(`(?s)^([ \t\r\n,]+)`)
-	reCommand = regexp.MustCompile(`(?s)^([aAcChHlLmMqQsStTvVzZ])`)
-	reNumber  = regexp.MustCompile(`(?s)^(([-+]?[0-9]+(\.[0-9]*)?|[-+]?\.[0-9]+)([eE][-+]?[0-9]+)?)`)
-)
+	switch s.Key {
+	case "C", "c":
+		tokens = append(tokens,
+			FloatToString(s.Data[0])+" "+FloatToString(s.Data[1])+", "+
+				FloatToString(s.Data[2])+" "+FloatToString(s.Data[3])+", "+
+				FloatToString(s.Data[4])+" "+FloatToString(s.Data[5]))
+
+	case "S", "s", "Q", "q":
+		tokens = append(tokens,
+			FloatToString(s.Data[0])+" "+FloatToString(s.Data[1])+", "+
+				FloatToString(s.Data[2])+" "+FloatToString(s.Data[3]))
+
+	default:
+		for _, d := range s.Data {
+			tokens = append(tokens, FloatToString(d))
+		}
+	}
+
+	return strings.Join(tokens, " ")
+}
+
+// FloatToString returns a string of floating point numbers with precision 3. Good perfomance.
+func FloatToString(a float64) (res string) {
+	a *= 1e3
+	if a < 1 {
+		return "0"
+	}
+
+	res = strconv.Itoa(int(a))
+	l := len(res)
+	if l > 3 {
+		l -= 3
+	} else {
+		l = 0
+	}
+	return res[:l] + "." + res[l:]
+}
 
 func (p pathToken) isType(t int) bool {
 	return p.tokenType == t
@@ -113,25 +155,10 @@ func ParsePath(d string) (segments []Segment, err error) {
 }
 
 func Serialize(segments []Segment) string {
-	var tokens []string
-	for _, s := range segments {
-		tokens = append(tokens, s.Key)
-		switch s.Key {
-		case "C", "c":
-			tokens = append(tokens,
-				fmt.Sprintf("%g %g, %g %g, %g %g", s.Data[0], s.Data[1], s.Data[2], s.Data[3], s.Data[4], s.Data[5]))
-
-		case "S", "s", "Q", "q":
-			tokens = append(tokens,
-				fmt.Sprintf("%g %g, %g %g", s.Data[0], s.Data[1], s.Data[2], s.Data[3]))
-
-		default:
-			for _, d := range s.Data {
-				tokens = append(tokens, strconv.FormatFloat(d, 'f', -1, 64))
-			}
-		}
+	tokens := make([]string, len(segments))
+	for i, s := range segments {
+		tokens[i] = s.String()
 	}
-
 	return strings.Join(tokens, " ")
 }
 
