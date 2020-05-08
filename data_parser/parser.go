@@ -127,7 +127,7 @@ func Serialize(segments []Segment) string {
 
 		default:
 			for _, d := range s.Data {
-				tokens = append(tokens, fmt.Sprintf("%g", d))
+				tokens = append(tokens, strconv.FormatFloat(d, 'f', -1, 64))
 			}
 		}
 	}

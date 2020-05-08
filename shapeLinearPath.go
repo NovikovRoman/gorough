@@ -1,6 +1,8 @@
 package gorough
 
-import "fmt"
+import (
+	"strconv"
+)
 
 type linearPath struct {
 	options    *LineOptions
@@ -18,7 +20,7 @@ func (l linearPath) Operations() []operation {
 func (l linearPath) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       l.options.Styles.Stroke,
-		"stroke-width": fmt.Sprintf("%g", l.options.Styles.StrokeWidth),
+		"stroke-width": strconv.FormatFloat(l.options.Styles.StrokeWidth, 'f', -1, 64),
 	}
 }
 

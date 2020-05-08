@@ -21,7 +21,7 @@ func PointsOnPath(path string, tolerance float64, distance float64) (out [][]Poi
 	for _, s := range normalize {
 		switch s.Key {
 		case "M":
-			sets, currentPoints, pendingCurve = appendPendingPoints(sets, currentPoints, pendingCurve, tolerance)
+			appendPendingPoints(&sets, &currentPoints, &pendingCurve, tolerance)
 			start = Point{
 				X: s.Data[0],
 				Y: s.Data[1],
@@ -29,7 +29,7 @@ func PointsOnPath(path string, tolerance float64, distance float64) (out [][]Poi
 			currentPoints = append(currentPoints, start)
 
 		case "L":
-			currentPoints, pendingCurve = appendPendingCurve(currentPoints, pendingCurve, tolerance)
+			appendPendingCurve(&currentPoints, &pendingCurve, tolerance)
 			currentPoints = append(currentPoints, Point{
 				X: s.Data[0],
 				Y: s.Data[1],
@@ -57,17 +57,15 @@ func PointsOnPath(path string, tolerance float64, distance float64) (out [][]Poi
 			})
 
 		case "Z":
-			currentPoints, pendingCurve = appendPendingCurve(currentPoints, pendingCurve, tolerance)
+			appendPendingCurve(&currentPoints, &pendingCurve, tolerance)
 			currentPoints = append(currentPoints, start)
 		}
 	}
 
-	sets, currentPoints, pendingCurve = appendPendingPoints(sets, currentPoints, pendingCurve, tolerance)
+	appendPendingPoints(&sets, &currentPoints, &pendingCurve, tolerance)
 	if distance == 0 {
 		return sets, nil
 	}
-
-
 
 	for _, set := range sets {
 		simplifiedSet := Simplify(set, distance)
@@ -78,18 +76,19 @@ func PointsOnPath(path string, tolerance float64, distance float64) (out [][]Poi
 	return
 }
 
-func appendPendingCurve(currentPoints []Point, pendingCurve []Point, tolerance float64) ([]Point, []Point) {
-	if len(pendingCurve) >= 4 {
-		currentPoints = append(currentPoints, PointsOnBezierCurves(pendingCurve, tolerance, 0)...)
+func appendPendingCurve(currentPoints *[]Point, pendingCurve *[]Point, tolerance float64) {
+	if len(*pendingCurve) >= 4 {
+		*currentPoints = append(*currentPoints, PointsOnBezierCurves(*pendingCurve, tolerance, 0)...)
 	}
-	return currentPoints, []Point{}
+	*pendingCurve = []Point{}
+	return
 }
 
-func appendPendingPoints(sets [][]Point, currentPoints []Point, pendingCurve []Point, tolerance float64) ([][]Point, []Point, []Point) {
-	currentPoints, pendingCurve = appendPendingCurve(currentPoints, pendingCurve, tolerance)
-	if len(currentPoints) > 0 {
-		sets = append(sets, currentPoints)
-		currentPoints = []Point{}
+func appendPendingPoints(sets *[][]Point, currentPoints *[]Point, pendingCurve *[]Point, tolerance float64) {
+	appendPendingCurve(currentPoints, pendingCurve, tolerance)
+	if len(*currentPoints) > 0 {
+		*sets = append(*sets, *currentPoints)
+		*currentPoints = []Point{}
 	}
-	return sets, currentPoints, pendingCurve
+	return
 }

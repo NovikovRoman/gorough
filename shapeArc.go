@@ -1,6 +1,8 @@
 package gorough
 
-import "fmt"
+import (
+	"strconv"
+)
 
 type arc struct {
 	options    *EllipseOptions
@@ -18,9 +20,9 @@ func (a arc) Operations() []operation {
 func (a arc) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       a.options.Styles.Stroke,
-		"stroke-width": fmt.Sprintf("%g", a.options.Styles.StrokeWidth),
+		"stroke-width": strconv.FormatFloat(a.options.Styles.StrokeWidth, 'f', -1, 64),
 		"fill":         a.options.Styles.Fill,
-		"fill-weight":  fmt.Sprintf("%g", a.options.Styles.FillWeight),
+		"fill-weight":  strconv.FormatFloat(a.options.Styles.FillWeight, 'f', -1, 64),
 	}
 }
 

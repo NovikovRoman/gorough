@@ -1,13 +1,14 @@
 package gorough
 
 func PointsOnBezierCurves(points []Point, tolerance, distance float64) (newPoints []Point) {
+	newPoints = []Point{}
 	if tolerance == 0 {
 		tolerance = 0.15
 	}
 	numSegments := (len(points) - 1) / 3
 	for i := 0; i < numSegments; i++ {
 		offset := i * 3
-		newPoints = getPointsOnBezierCurveWithSplitting(points, offset, tolerance, newPoints...)
+		getPointsOnBezierCurveWithSplitting(points, offset, tolerance, &newPoints)
 	}
 
 	if distance > 0 {
@@ -16,16 +17,14 @@ func PointsOnBezierCurves(points []Point, tolerance, distance float64) (newPoint
 	return
 }
 
-func getPointsOnBezierCurveWithSplitting(points []Point, offset int, tolerance float64, newPoints ...Point) (outPoints []Point) {
-	outPoints = append(outPoints, newPoints...)
-
+func getPointsOnBezierCurveWithSplitting(points []Point, offset int, tolerance float64, newPoints *[]Point) {
 	if flatness(points, offset) < tolerance {
 		p0 := points[offset]
-		if len(outPoints) == 0 || Distance(outPoints[len(outPoints)-1], p0) > 1 {
-			outPoints = append(outPoints, p0)
+		if len(*newPoints) == 0 || Distance((*newPoints)[len(*newPoints)-1], p0) > 1 {
+			*newPoints = append(*newPoints, p0)
 		}
-		outPoints = append(outPoints, points[offset+3])
-		return outPoints
+		*newPoints = append(*newPoints, points[offset+3])
+		return
 	}
 
 	// subdivide
@@ -44,11 +43,11 @@ func getPointsOnBezierCurveWithSplitting(points []Point, offset int, tolerance f
 
 	red := lerp(r1, r2, t)
 
-	outPoints = getPointsOnBezierCurveWithSplitting(
-		[]Point{p1, q1, r1, red}, 0, tolerance, outPoints...)
-	outPoints = getPointsOnBezierCurveWithSplitting(
-		[]Point{red, r2, q3, p4}, 0, tolerance, outPoints...)
-	return outPoints
+	getPointsOnBezierCurveWithSplitting(
+		[]Point{p1, q1, r1, red}, 0, tolerance, newPoints)
+	getPointsOnBezierCurveWithSplitting(
+		[]Point{red, r2, q3, p4}, 0, tolerance, newPoints)
+	return
 }
 
 func lerp(a Point, b Point, t float64) Point {

@@ -1,6 +1,8 @@
 package gorough
 
-import "fmt"
+import (
+	"strconv"
+)
 
 type ellipse struct {
 	options    *EllipseOptions
@@ -18,9 +20,9 @@ func (e ellipse) Operations() []operation {
 func (e ellipse) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       e.options.Styles.Stroke,
-		"stroke-width": fmt.Sprintf("%g", e.options.Styles.StrokeWidth),
+		"stroke-width": strconv.FormatFloat(e.options.Styles.StrokeWidth, 'f', -1, 64),
 		"fill":         e.options.Styles.Fill,
-		"fill-weight":  fmt.Sprintf("%g", e.options.Styles.FillWeight),
+		"fill-weight":  strconv.FormatFloat(e.options.Styles.FillWeight, 'f', -1, 64),
 	}
 }
 

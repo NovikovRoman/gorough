@@ -43,29 +43,30 @@ func DistanceToSegmentSq(p Point, v Point, w Point) float64 {
 	return DistanceSq(p, lerp(v, w, t))
 }
 
-func RotatePoints(points []Point, center Point, degrees float64) []Point {
-	if len(points) == 0 {
-		return points
+func RotatePoints(points *[]Point, center Point, degrees float64) {
+	if len(*points) == 0 {
+		return
 	}
 
 	angle := (math.Pi / 180) * degrees
 	cos := math.Cos(angle)
 	sin := math.Sin(angle)
 
-	for i, p := range points {
-		points[i].X = ((p.X - center.X) * cos) - ((p.Y - center.Y) * sin) + center.X
-		points[i].Y = ((p.X - center.X) * sin) + ((p.Y - center.Y) * cos) + center.Y
+	for i, p := range *points {
+		(*points)[i].X = ((p.X - center.X) * cos) - ((p.Y - center.Y) * sin) + center.X
+		(*points)[i].Y = ((p.X - center.X) * sin) + ((p.Y - center.Y) * cos) + center.Y
 	}
-	return points
+	return
 }
 
-func RotateLines(lines []Line, center Point, degrees float64) []Line {
-	for i := range lines {
-		points := RotatePoints([]Point{lines[i].P1, lines[i].P2}, center, degrees)
-		lines[i].P1 = points[0]
-		lines[i].P2 = points[1]
+func RotateLines(lines *[]Line, center Point, degrees float64) {
+	for i := range *lines {
+		points := []Point{(*lines)[i].P1, (*lines)[i].P2}
+		RotatePoints(&points, center, degrees)
+		(*lines)[i].P1 = points[0]
+		(*lines)[i].P2 = points[1]
 	}
-	return lines
+	return
 }
 
 func LineIntersection(a, b, c, d Point) (Point, bool) {

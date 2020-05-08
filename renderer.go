@@ -1,10 +1,10 @@
 package gorough
 
 import (
-	"fmt"
 	"github.com/NovikovRoman/gorough/data_parser"
 	"github.com/ajstarks/svgo"
 	"math"
+	"strconv"
 )
 
 func DrawSVG(s *svg.SVG, d Drawable, groupAttrs Attributes) {
@@ -41,7 +41,7 @@ func DrawSVG(s *svg.SVG, d Drawable, groupAttrs Attributes) {
 			s.Path(
 				operationToPath(op),
 				"stroke='"+d.Styles().Fill+"'",
-				"stroke-width='"+fmt.Sprintf("%g", fweight)+"'",
+				"stroke-width='"+strconv.FormatFloat(fweight, 'f', -1, 64)+"'",
 				"fill='none'",
 				attr.String(),
 			)

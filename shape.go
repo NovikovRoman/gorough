@@ -5,7 +5,6 @@ import (
 	"math"
 	"math/rand"
 	"strings"
-	"time"
 )
 
 const (
@@ -27,11 +26,6 @@ const (
 	commandCurveTo = "curveTo"
 	commandLineTo  = "lineTo"
 )
-
-func random() float64 {
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Float64()
-}
 
 func lineOperations(p1 Point, p2 Point, opt *PenOptions) []operation {
 	return []operation{{code: operationPath, commands: doubleLine(p1, p2, opt)}}
@@ -61,7 +55,7 @@ func oneLine(p1 Point, p2 Point, move bool, overlay bool, opt *PenOptions) (comm
 	}
 
 	halfOffset := offset / 2
-	divergePoint := 0.2 + random()*0.2
+	divergePoint := 0.2 + rand.Float64()*0.2
 	midDispX := opt.Bowing * opt.MaxRandomnessOffset * (p2.Y - p1.Y) / 200
 	midDispY := opt.Bowing * opt.MaxRandomnessOffset * (p1.X - p2.X) / 200
 	midDispX = offsetOpt(midDispX, opt.Roughness, roughnessGain)
@@ -120,23 +114,25 @@ func offsetOpt(x float64, roughness float64, roughnessGain float64) float64 {
 }
 
 func offset(min float64, max float64, roughness float64, roughnessGain float64) float64 {
-	return roughness * roughnessGain * ((random() * (max - min)) + min)
+	return roughness * roughnessGain * ((rand.Float64() * (max - min)) + min)
 }
 
-func operationToPath(op operation) (path string) {
-	for _, c := range op.commands {
+func operationToPath(op operation) string {
+	path := make([]string, len(op.commands))
+	for i, c := range op.commands {
 		switch c.code {
 		case commandMove:
-			path += fmt.Sprintf("M%g %g ", c.data[0], c.data[1])
+			path[i] = fmt.Sprintf("M%g %g", c.data[0], c.data[1])
+
 		case commandCurveTo:
-			path += fmt.Sprintf(
-				"C%g %g, %g %g, %g %g ", c.data[0], c.data[1], c.data[2], c.data[3], c.data[4], c.data[5])
+			path[i] = fmt.Sprintf(
+				"C%g %g, %g %g, %g %g", c.data[0], c.data[1], c.data[2], c.data[3], c.data[4], c.data[5])
+
 		case commandLineTo:
-			path += fmt.Sprintf("L%g %g ", c.data[0], c.data[1])
+			path[i] = fmt.Sprintf("L%g %g", c.data[0], c.data[1])
 		}
 	}
-	path = strings.TrimSpace(path)
-	return
+	return strings.Join(path, "")
 }
 
 func rectangleOperation(p Point, width, height float64, opt *RectangleOptions) operation {

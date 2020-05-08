@@ -65,13 +65,13 @@ func polygonHachureLines(points []Point, hachureAngle float64, hachureGap float6
 	rotationCenter := Point{}
 	angle := math.Round(hachureAngle + 90)
 	if angle != 0 {
-		points = RotatePoints(points, rotationCenter, angle)
+		RotatePoints(&points, rotationCenter, angle)
 	}
 
 	lines := straightHachureLines(points, hachureGap, opt)
 	if angle != 0 {
-		points = RotatePoints(points, rotationCenter, -angle)
-		lines = RotateLines(lines, rotationCenter, -angle)
+		RotatePoints(&points, rotationCenter, -angle)
+		RotateLines(&lines, rotationCenter, -angle)
 	}
 	return lines
 }

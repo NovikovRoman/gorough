@@ -1,6 +1,8 @@
 package gorough
 
-import "fmt"
+import (
+	"strconv"
+)
 
 type rectangle struct {
 	options    *RectangleOptions
@@ -18,9 +20,9 @@ func (r rectangle) Operations() []operation {
 func (r rectangle) Attributes() Attributes {
 	return map[string]string{
 		"stroke":       r.options.Styles.Stroke,
-		"stroke-width": fmt.Sprintf("%g", r.options.Styles.StrokeWidth),
+		"stroke-width": strconv.FormatFloat(r.options.Styles.StrokeWidth, 'f', -1, 64),
 		"fill":         r.options.Styles.Fill,
-		"fill-weight":  fmt.Sprintf("%g", r.options.Styles.FillWeight),
+		"fill-weight":  strconv.FormatFloat(r.options.Styles.FillWeight, 'f', -1, 64),
 	}
 }
 
