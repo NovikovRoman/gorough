@@ -1,5 +1,7 @@
 # Gorough
 
+![GitHub](https://img.shields.io/github/license/NovikovRoman/gorough)
+
 Based on [Rough.js](https://github.com/pshihn/rough).
 
 Gorough works with [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG).
