@@ -1,5 +1,5 @@
 # Gorough
-
+[![Go Reference](https://pkg.go.dev/badge/github.com/NovikovRoman/gorough.svg)](https://pkg.go.dev/github.com/NovikovRoman/gorough)
 ![GitHub](https://img.shields.io/github/license/NovikovRoman/gorough)
 
 Based on [Rough.js](https://github.com/pshihn/rough).
