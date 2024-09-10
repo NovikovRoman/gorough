@@ -34,20 +34,20 @@ func (f *dashedFiller) setConnectEnds(b bool) {
 	f.connectEnds = b
 }
 
-func (f dashedFiller) fillPolygon(points []Point, opt *LineOptions) operation {
-	lines := polygonHachureLines(points, f.hachureAngle, f.hachureGap, opt)
+func (f dashedFiller) fillPolygon(points []Point, style Style, pen Pen, filler Filler) operation {
+	lines := polygonHachureLines(points, f.hachureAngle, f.hachureGap, style.StrokeWidth)
 	return operation{
 		code:     operationFillSketch,
-		commands: f.dashedLine(lines, opt),
+		commands: f.dashedLine(lines, style.StrokeWidth, pen),
 	}
 }
 
-func (f dashedFiller) dashedLine(lines []Line, opt *LineOptions) (commands []command) {
+func (f dashedFiller) dashedLine(lines []Line, strokeWidth float64, pen Pen) (commands []command) {
 	offset := f.dashOffset
 	if offset < 0 {
-		offset = initHachureGap(f.hachureGap, opt.Styles.StrokeWidth)
+		offset = initHachureGap(f.hachureGap, strokeWidth)
 	}
-	gap := initHachureGap(f.hachureGap, opt.Styles.StrokeWidth)
+	gap := initHachureGap(f.hachureGap, strokeWidth)
 
 	commands = []command{}
 	for _, line := range lines {
@@ -74,7 +74,7 @@ func (f dashedFiller) dashedLine(lines []Line, opt *LineOptions) (commands []com
 				Y: p1.Y + (lend * math.Sin(alpha)) + (startOffset * math.Sin(alpha)),
 			}
 
-			commands = append(commands, doubleLine(start, end, opt.PenOptions)...)
+			commands = append(commands, doubleLine(start, end, pen)...)
 		}
 	}
 	return

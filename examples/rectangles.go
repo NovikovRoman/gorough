@@ -1,36 +1,37 @@
 package main
 
 import (
-	"github.com/NovikovRoman/gorough"
-	"github.com/ajstarks/svgo"
+	"bufio"
+	"bytes"
 	"os"
+
+	"github.com/NovikovRoman/gorough"
+	svg "github.com/NovikovRoman/svgo"
 )
 
 func rectangles() (err error) {
-	rectangle := gorough.NewRectangle(gorough.Point{X: 20, Y: 20}, 240, 120, nil)
+	rectangle := gorough.NewRect(gorough.Point{X: 20, Y: 20}, 240, 120)
 
-	square := gorough.NewRectangle(gorough.Point{X: 10, Y: 10}, 70, 70, &gorough.RectangleOptions{
-		Styles: &gorough.Styles{
+	square := gorough.NewRect(gorough.Point{X: 10, Y: 10}, 70, 70,
+		gorough.RectStyle(gorough.Style{
 			Stroke: "#ff0080",
-		},
-	})
+		}),
+	)
 
-	var f *os.File
-	if f, err = os.Create("rectangles.svg"); err != nil {
-		return
-	}
-	defer func() {
-		if derr := f.Close(); derr != nil {
-			err = derr
-		}
-	}()
+	var b bytes.Buffer
+	picSvg := bufio.NewWriter(&b)
 
 	width := 280
 	height := 160
-	canvas := svg.New(f)
+	canvas := svg.New(picSvg)
 	canvas.Start(width, height)
 	gorough.DrawSVG(canvas, rectangle, nil)
 	gorough.DrawSVG(canvas, square, nil)
 	canvas.End()
+
+	if err = picSvg.Flush(); err != nil {
+		return
+	}
+	err = os.WriteFile("rectangles.svg", b.Bytes(), 0644)
 	return
 }

@@ -1,10 +1,11 @@
-package data_parser
+package tools
 
 func Absolutize(segments []Segment) (out []Segment) {
 	cx := float64(0)
 	cy := float64(0)
 	subx := float64(0)
 	suby := float64(0)
+	out = make([]Segment, 0, len(segments))
 
 	for _, s := range segments {
 		switch s.Key {
@@ -167,9 +168,8 @@ func Absolutize(segments []Segment) (out []Segment) {
 	return
 }
 
-func calcNewData(data []float64, cx, cy float64) []float64 {
-	var res []float64
-	res = []float64{}
+func calcNewData(data []float64, cx, cy float64) (res []float64) {
+	res = make([]float64, 0, len(data))
 	for i, d := range data {
 		if i%2 > 0 {
 			res = append(res, d+cy)

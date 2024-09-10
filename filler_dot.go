@@ -28,29 +28,26 @@ func (f *dotFiller) setConnectEnds(b bool) {
 	f.connectEnds = b
 }
 
-func (f dotFiller) fillPolygon(points []Point, opt *LineOptions) operation {
-	o := &EllipseOptions{
-		PenOptions:   opt.PenOptions,
-		CurveOptions: CurveOptionsDefault(),
-		Styles:       opt.Styles,
-	}
-	o.CurveOptions.StepCount = 4
-	o.PenOptions.Roughness = 1
-
-	return f.dotsOnLines(polygonHachureLines(points, f.hachureAngle, f.hachureGap, opt), o)
+func (f dotFiller) fillPolygon(points []Point, style Style, pen Pen, filler Filler) operation {
+	pen.Roughness = 1
+	return f.dotsOnLines(
+		polygonHachureLines(points, f.hachureAngle, f.hachureGap, style.StrokeWidth), filler, style, pen)
 }
 
-func (f dotFiller) dotsOnLines(lines []Line, opt *EllipseOptions) operation {
+func (f dotFiller) dotsOnLines(lines []Line, filler Filler, style Style, pen Pen) operation {
 	var commands []command
 	commands = []command{}
-	gap := initHachureGap(f.hachureGap, opt.Styles.StrokeWidth)
+	gap := initHachureGap(f.hachureGap, style.StrokeWidth)
 	gap = math.Max(gap, 0.1)
 
-	fweight := opt.Styles.FillWeight
+	fweight := style.FillWeight
 	if fweight < 0 {
-		fweight = opt.Styles.StrokeWidth / 2
+		fweight = style.StrokeWidth / 2
 	}
 	ro := gap / 4
+
+	curveOpt := CurveDefault()
+	curveOpt.StepCount = 4
 
 	for _, line := range lines {
 		length := line.length()
@@ -62,12 +59,12 @@ func (f dotFiller) dotsOnLines(lines []Line, opt *EllipseOptions) operation {
 
 		for i := float64(0); i < count; i++ {
 			y := minY + offset + (i * gap)
-			cx := randOffsetWithRange(x-ro, x+ro, opt.PenOptions)
-			cy := randOffsetWithRange(y-ro, y+ro, opt.PenOptions)
+			cx := randOffsetWithRange(x-ro, x+ro, pen.Roughness)
+			cy := randOffsetWithRange(y-ro, y+ro, pen.Roughness)
 			el := ellipseOperations(Point{
 				X: cx,
 				Y: cy,
-			}, fweight, fweight, opt)
+			}, fweight, fweight, curveOpt, style, pen, filler)
 
 			for _, e := range el {
 				commands = append(commands, e.commands...)

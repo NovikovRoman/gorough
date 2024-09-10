@@ -1,8 +1,9 @@
-package data_parser
+package tools
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestAbsolutize(t *testing.T) {

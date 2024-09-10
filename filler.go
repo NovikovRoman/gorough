@@ -55,20 +55,20 @@ func (e activeEdgeEntries) Less(i, j int) bool {
 }
 
 type Filler interface {
-	fillPolygon(points []Point, opt *LineOptions) operation
+	fillPolygon(points []Point, style Style, pen Pen, filler Filler) operation
 	SetAngle(float64)
 	SetGap(float64)
 	setConnectEnds(bool)
 }
 
-func polygonHachureLines(points []Point, hachureAngle float64, hachureGap float64, opt *LineOptions) []Line {
+func polygonHachureLines(points []Point, hachureAngle, hachureGap, strokeWidth float64) []Line {
 	rotationCenter := Point{}
 	angle := math.Round(hachureAngle + 90)
 	if angle != 0 {
 		RotatePoints(&points, rotationCenter, angle)
 	}
 
-	lines := straightHachureLines(points, hachureGap, opt)
+	lines := straightHachureLines(points, hachureGap, strokeWidth)
 	if angle != 0 {
 		RotatePoints(&points, rotationCenter, -angle)
 		RotateLines(&lines, rotationCenter, -angle)
@@ -76,7 +76,7 @@ func polygonHachureLines(points []Point, hachureAngle float64, hachureGap float6
 	return lines
 }
 
-func straightHachureLines(vertices []Point, hachureGap float64, opt *LineOptions) (lines []Line) {
+func straightHachureLines(vertices []Point, hachureGap, strokeWidth float64) (lines []Line) {
 	if !vertices[0].Eq(vertices[len(vertices)-1]) {
 		vertices = append(vertices, vertices[0])
 	}
@@ -85,7 +85,7 @@ func straightHachureLines(vertices []Point, hachureGap float64, opt *LineOptions
 		return
 	}
 
-	gap := initHachureGap(hachureGap, opt.Styles.StrokeWidth)
+	gap := initHachureGap(hachureGap, strokeWidth)
 	gap = math.Max(gap, 0.1)
 
 	// Create sorted edges table
@@ -145,7 +145,7 @@ func straightHachureLines(vertices []Point, hachureGap float64, opt *LineOptions
 			edges = edges[ix+1:]
 		}
 
-		filterActiveEdges = []activeEdgeEntry{}
+		filterActiveEdges = make([]activeEdgeEntry, 0, len(activeEdges))
 		for i, a := range activeEdges {
 			if activeEdges[i].edge.ymax > y {
 				filterActiveEdges = append(filterActiveEdges, a)
@@ -180,8 +180,8 @@ func straightHachureLines(vertices []Point, hachureGap float64, opt *LineOptions
 	return
 }
 
-func randOffsetWithRange(min, max float64, opt *PenOptions) float64 {
-	return offset(min, max, opt.Roughness, 1)
+func randOffsetWithRange(min, max, roughness float64) float64 {
+	return offset(min, max, roughness, 1)
 }
 
 func initHachureGap(hachureGap float64, strokeWidth float64) (gap float64) {

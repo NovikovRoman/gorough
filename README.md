@@ -1,4 +1,5 @@
 # Gorough
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/NovikovRoman/gorough.svg)](https://pkg.go.dev/github.com/NovikovRoman/gorough)
 ![GitHub](https://img.shields.io/github/license/NovikovRoman/gorough)
 
@@ -7,12 +8,15 @@ Based on [Rough.js](https://github.com/pshihn/rough).
 Gorough works with [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG).
 
 ## Install
+
 ```shell script
 go get -u github.com/NovikovRoman/gorough
 ```
+
 ## Usage
 
 ### Create SVG canvas
+
 ```go
 width := 500
 height := 500
@@ -28,23 +32,23 @@ canvas.End()
 ![Lines](images/lines.svg)
 
 ```go
-line := gorough.NewLine(gorough.Point{X: 30, Y: 100}, gorough.Point{X: 270, Y: 20}, &gorough.LineOptions{
-    Styles: &gorough.Styles{
+line := gorough.NewLine(gorough.Point{X: 30, Y: 100}, gorough.Point{X: 270, Y: 20},
+    gorough.LineStyle(gorough.Style{
         Stroke: "#ff0000",
-    },
-})
+    }),
+)
 
-line2 := gorough.NewLine(gorough.Point{X: 60, Y: 10}, gorough.Point{X: 230, Y: 110}, &gorough.LineOptions{
-    Styles: &gorough.Styles{
+line2 := gorough.NewLine(gorough.Point{X: 60, Y: 10}, gorough.Point{X: 230, Y: 110},
+    gorough.LineStyle(gorough.Style{
         Stroke: "#00ff00",
-    },
-})
+    }),
+)
 
-line3 := gorough.NewLine(gorough.Point{X: 10, Y: 70}, gorough.Point{X: 250, Y: 90}, &gorough.LineOptions{
-    Styles: &gorough.Styles{
+line3 := gorough.NewLine(gorough.Point{X: 10, Y: 70}, gorough.Point{X: 250, Y: 90},
+    gorough.LineStyle(gorough.Style{
         Stroke: "#0000ff",
-    },
-})
+    }),
+)
 
 gorough.DrawSVG(canvas, line, nil)
 gorough.DrawSVG(canvas, line2, nil)
@@ -56,19 +60,20 @@ gorough.DrawSVG(canvas, line3, nil)
 ![Rectangle](images/rectangles.svg)
 
 ```go
-rectangle := gorough.NewRectangle(gorough.Point{X: 20, Y: 20}, 240, 120, nil)
+rectangle := gorough.NewRect(gorough.Point{X: 20, Y: 20}, 240, 120)
 
-square := gorough.NewRectangle(gorough.Point{X: 10, Y: 10}, 70, 70, &gorough.RectangleOptions{
-    Styles: &gorough.Styles{
+square := gorough.NewRect(gorough.Point{X: 10, Y: 10}, 70, 70,
+    gorough.RectStyle(gorough.Style{
         Stroke: "#ff0080",
-    },
-})
+    }),
+)
 
 gorough.DrawSVG(canvas, rectangle, nil)
 gorough.DrawSVG(canvas, square, nil)
 ```
 
 ### Poligons
+
 ![Poligons](images/poligons.svg)
 
 ```go
@@ -78,7 +83,7 @@ poligon := gorough.NewPoligon([]gorough.Point{
     {X: 100, Y: 100},
     {X: 300, Y: 100},
     {X: 60, Y: 200},
-}, nil)
+})
 
 poligon2 := gorough.NewPoligon([]gorough.Point{
     {X: 50, Y: 20},
@@ -86,11 +91,11 @@ poligon2 := gorough.NewPoligon([]gorough.Point{
     {X: 300, Y: 180},
     {X: 280, Y: 30},
     {X: 170, Y: 180},
-}, &gorough.LineOptions{
-    Styles: &gorough.Styles{
+},
+    gorough.PoligonStyle(gorough.Style{
         Stroke: "#ff0000",
-    },
-})
+    }),
+)
 
 gorough.DrawSVG(canvas, poligon, nil)
 gorough.DrawSVG(canvas, poligon2, nil)
@@ -101,25 +106,26 @@ gorough.DrawSVG(canvas, poligon2, nil)
 ![Ellipses](images/ellipses.svg)
 
 ```go
-circle := gorough.NewCircle(gorough.Point{X: 40, Y: 80}, 50, &gorough.EllipseOptions{
-    Styles: &gorough.Styles{
+circle := gorough.NewCircle(gorough.Point{X: 40, Y: 80}, 50,
+    gorough.CircleStyle(gorough.Style{
         Stroke:      "#ff0080",
         StrokeWidth: 1,
-    },
-})
+    }),
+)
 
-ellipseVert := gorough.NewEllipse(gorough.Point{X: 150, Y: 60}, 60, 110, &gorough.EllipseOptions{
-    Styles: &gorough.Styles{
+ellipseVert := gorough.NewEllipse(gorough.Point{X: 150, Y: 60}, 60, 110,
+    gorough.EllipseStyle(gorough.Style{
         Stroke:      "#00ff80",
-    },
-})
+        StrokeWidth: 1,
+    }),
+)
 
-ellipseHoriz := gorough.NewEllipse(gorough.Point{X: 250, Y: 60}, 150, 80, &gorough.EllipseOptions{
-    Styles: &gorough.Styles{
+ellipseHoriz := gorough.NewEllipse(gorough.Point{X: 250, Y: 60}, 150, 80,
+    gorough.EllipseStyle(gorough.Style{
         Stroke:      "#660066",
         StrokeWidth: 1,
-    },
-})
+    }),
+)
 
 gorough.DrawSVG(canvas, circle, nil)
 gorough.DrawSVG(canvas, ellipseVert, nil)
@@ -129,27 +135,25 @@ gorough.DrawSVG(canvas, ellipseHoriz, nil)
 ### Arcs
 
 ![Arcs](images/arcs.svg)
+
 ```go
 arc := gorough.NewArc(gorough.Point{X: 40, Y: 80}, 100, 100, -math.Pi/2, 0, true,
-		&gorough.EllipseOptions{
-			Styles: &gorough.Styles{
-				Stroke: "#ff0080",
-			},
-		})
+    gorough.ArcStyle(gorough.Style{
+        Stroke: "#ff0000",
+    }),
+)
 
 arc2 := gorough.NewArc(gorough.Point{X: 150, Y: 60}, 60, 110, -math.Pi/6, math.Pi, true,
-    &gorough.EllipseOptions{
-        Styles: &gorough.Styles{
-            Stroke: "#00ff80",
-        },
-    })
+    gorough.ArcStyle(gorough.Style{
+        Stroke: "#00ff80",
+    }),
+)
 
 arc3 := gorough.NewArc(gorough.Point{X: 250, Y: 60}, 150, 80, -math.Pi/2, math.Pi/2, false,
-    &gorough.EllipseOptions{
-        Styles: &gorough.Styles{
-            Stroke: "#660066",
-        },
-    })
+    gorough.ArcStyle(gorough.Style{
+        Stroke: "#660066",
+    }),
+)
 
 gorough.DrawSVG(canvas, arc, nil)
 gorough.DrawSVG(canvas, arc2, nil)
@@ -167,7 +171,7 @@ linearPath := gorough.NewLinearPath([]gorough.Point{
     {X: 100, Y: 100},
     {X: 300, Y: 100},
     {X: 60, Y: 200},
-}, nil)
+})
 
 linearPath2 := gorough.NewLinearPath([]gorough.Point{
     {X: 20, Y: 50},
@@ -180,15 +184,16 @@ linearPath2 := gorough.NewLinearPath([]gorough.Point{
     {X: 230, Y: 200},
     {X: 260, Y: 50},
     {X: 290, Y: 200},
-}, &gorough.LineOptions{
-    Styles: &gorough.Styles{
+},
+    gorough.LinearPathStyle(gorough.Style{
         Stroke: "#00ff00",
-    },
-})
+    }),
+)
 
 gorough.DrawSVG(canvas, linearPath, nil)
 gorough.DrawSVG(canvas, linearPath2, nil)
 ```
+
 ### Curves
 
 ![Curves](images/curves.svg)
@@ -200,7 +205,7 @@ curve := gorough.NewCurve([]gorough.Point{
     {X: 100, Y: 100},
     {X: 300, Y: 100},
     {X: 60, Y: 200},
-}, nil)
+})
 
 curve2 := gorough.NewCurve([]gorough.Point{
     {X: 50, Y: 20},
@@ -208,11 +213,11 @@ curve2 := gorough.NewCurve([]gorough.Point{
     {X: 300, Y: 180},
     {X: 280, Y: 30},
     {X: 170, Y: 180},
-}, &gorough.EllipseOptions{
-    Styles: &gorough.Styles{
+},
+    gorough.CurveStyle(gorough.Style{
         Stroke: "#ff0000",
-    },
-})
+    }),
+)
 
 gorough.DrawSVG(canvas, curve, nil)
 gorough.DrawSVG(canvas, curve2, nil)
@@ -253,26 +258,27 @@ hatchFiller := gorough.NewHatchFiller()
 zigZagFiller := gorough.NewZigZagFiller()
 zigZagHatchFiller := gorough.NewZigZagHatchFiller()
 
-hatch := gorough.NewRectangle(gorough.Point{X: 20, Y: 20}, 60, 60, &gorough.RectangleOptions{
-    Styles: &gorough.Styles{
-        Stroke:     "#4e9835",
-        Fill:       "#60c247",
+hatch := gorough.NewRect(gorough.Point{X: 380, Y: 20}, 100, 100,
+    gorough.RectStyle(gorough.Style{
+        Stroke:     "#492bfd",
+        Fill:       "#6239fe",
         FillWeight: 1,
-        Filler:     hatchFiller,
-    },
-})
+    }),
+    gorough.RectFiller(hatchFiller),
+)
 
 hatchFiller.SetAngle(90)
 hatchFiller.SetGap(8)
-hatchAlt := gorough.NewRectangle(gorough.Point{X: 100, Y: 20}, 60, 60, &gorough.RectangleOptions{
-    Styles: &gorough.Styles{
+hatchAlt := gorough.NewRect(gorough.Point{X: 100, Y: 20}, 60, 60,
+gorough.RectStyle(gorough.Style{
         Stroke:     "#4e9835",
         Fill:       "#60c247",
         FillWeight: 1,
-        Filler:     hatchFiller,
-    },
-})
+    }),
+    gorough.RectFiller(hatchAlt),
+)
 ```
+
 ## Options
 
 ### Styles
@@ -285,12 +291,14 @@ hatchAlt := gorough.NewRectangle(gorough.Point{X: 100, Y: 20}, 60, 60, &gorough.
 
 `FillWeight` - Numeric value representing the width of the hachure lines. Default value of the fillWeight is set to half the strokeWidth of that shape.
 
-`Filler` - fill styles (dashedFiller, dotFiller, hachureFiller, hatchFiller, zigZagFiller, zigZagHatchFiller).
+### Filler
+
+Fill styles (dashedFiller, dotFiller, hachureFiller, hatchFiller, zigZagFiller, zigZagHatchFiller).
 If filler value is nil and fill is not empty then fill style solid.
 
-### PenOptions
+### Pen
 
-![PenOptions](images/penOptions.svg)
+![Pen](images/pen.svg)
 
 The image shows:
 
@@ -305,9 +313,9 @@ The image shows:
 
 `Bowing` - Numerical value indicating how curvy the lines are when drawing a sketch. A value of 0 will cause straight lines. Default value is 1.
 
-### CurveOptions
+### CurveOption
 
-![CurveOptions](images/curveOptions.svg)
+![CurveOption](images/curveOption.svg)
 
 The image shows:
 
@@ -338,7 +346,9 @@ attrs["id"] = "otherShape"
 attrs["data-value"] = "123"
 gorough.DrawSVG(canvas, shape, attrs)
 ```
+
 In SVG:
+
 ```svg
 <g id="myShape">
 <path d="M42.8755552948236 … 55.54974206571005" fill='none' stroke='#ff0080' stroke-width='1' fill-weight='0' />
@@ -351,11 +361,11 @@ In SVG:
 ## Start example
 
 ```shell script
-cd examples/ && go build -o "example" && ./example
+cd examples/ && go build -o "examples" && ./examples
 ```
 
 ![Example](images/hodgepodge.svg)
 
-
 ## License
+
 [MIT License](LICENSE) © Roman Novikov

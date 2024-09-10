@@ -7,20 +7,11 @@ type Attributes map[string]string
 func (a Attributes) Exclude(attrs ...string) Attributes {
 	newAttrs := a
 	for _, k := range attrs {
-		if a.HasAttr(k) {
+		if _, ok := a[k]; ok {
 			delete(newAttrs, k)
 		}
 	}
 	return newAttrs
-}
-
-func (a Attributes) HasAttr(name string) bool {
-	for k := range a {
-		if k == name {
-			return true
-		}
-	}
-	return false
 }
 
 func (a Attributes) String() string {
@@ -31,38 +22,14 @@ func (a Attributes) String() string {
 	return strings.Join(attrs, " ")
 }
 
-type LineOptions struct {
-	PenOptions *PenOptions
-	Styles     *Styles
-}
-
-type EllipseOptions struct {
-	PenOptions   *PenOptions
-	CurveOptions *CurveOptions
-	Styles       *Styles
-}
-
-type RectangleOptions struct {
-	PenOptions *PenOptions
-	Styles     *Styles
-}
-
-type PathOptions struct {
-	PenOptions            *PenOptions
-	Styles                *Styles
-	Simplification        float64
-	CombineNestedSvgPaths bool
-}
-
-type Styles struct {
+type Style struct {
 	Stroke      string
 	StrokeWidth float64
 	Fill        string
 	FillWeight  float64
-	Filler      Filler
 }
 
-func (s *Styles) canonicalValues() {
+func (s Style) canonicalValues() Style {
 	if (s.Fill == "" || s.Stroke != "") && s.StrokeWidth == 0 {
 		s.StrokeWidth = 1
 	}
@@ -70,10 +37,11 @@ func (s *Styles) canonicalValues() {
 	if s.FillWeight == 0 {
 		s.FillWeight = s.StrokeWidth / 2
 	}
+	return s
 }
 
-func StylesDefault() *Styles {
-	return &Styles{
+func StyleDefault() Style {
+	return Style{
 		Stroke:      "#000",
 		StrokeWidth: 1,
 		Fill:        "",
@@ -81,28 +49,28 @@ func StylesDefault() *Styles {
 	}
 }
 
-type PenOptions struct {
+type Pen struct {
 	MaxRandomnessOffset float64
 	Roughness           float64
 	Bowing              float64
 }
 
-func PenOptionsDefault() *PenOptions {
-	return &PenOptions{
+func PenDefault() Pen {
+	return Pen{
 		MaxRandomnessOffset: 2,
 		Roughness:           1,
 		Bowing:              1,
 	}
 }
 
-type CurveOptions struct {
+type CurveOption struct {
 	Tightness float64
 	Fitting   float64
 	StepCount float64
 }
 
-func CurveOptionsDefault() *CurveOptions {
-	return &CurveOptions{
+func CurveDefault() CurveOption {
+	return CurveOption{
 		Tightness: 0,
 		Fitting:   0.95,
 		StepCount: 9,

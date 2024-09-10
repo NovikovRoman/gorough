@@ -47,7 +47,6 @@ func getPointsOnBezierCurveWithSplitting(points []Point, offset int, tolerance f
 		[]Point{p1, q1, r1, red}, 0, tolerance, newPoints)
 	getPointsOnBezierCurveWithSplitting(
 		[]Point{red, r2, q3, p4}, 0, tolerance, newPoints)
-	return
 }
 
 func lerp(a Point, b Point, t float64) Point {

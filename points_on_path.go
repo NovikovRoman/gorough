@@ -1,12 +1,12 @@
 package gorough
 
 import (
-	"github.com/NovikovRoman/gorough/data_parser"
+	"github.com/NovikovRoman/gorough/internal/tools"
 )
 
 func PointsOnPath(path string, tolerance float64, distance float64) (out [][]Point, err error) {
-	var segments []data_parser.Segment
-	if segments, err = data_parser.ParsePath(path); err != nil {
+	var segments []tools.Segment
+	if segments, err = tools.ParsePath(path); err != nil {
 		return
 	}
 
@@ -17,8 +17,7 @@ func PointsOnPath(path string, tolerance float64, distance float64) (out [][]Poi
 	)
 	start := Point{}
 
-	normalize := data_parser.Normalize(data_parser.Absolutize(segments))
-	for _, s := range normalize {
+	for _, s := range tools.Normalize(tools.Absolutize(segments)) {
 		switch s.Key {
 		case "M":
 			appendPendingPoints(&sets, &currentPoints, &pendingCurve, tolerance)
@@ -81,7 +80,6 @@ func appendPendingCurve(currentPoints *[]Point, pendingCurve *[]Point, tolerance
 		*currentPoints = append(*currentPoints, PointsOnBezierCurves(*pendingCurve, tolerance, 0)...)
 	}
 	*pendingCurve = []Point{}
-	return
 }
 
 func appendPendingPoints(sets *[][]Point, currentPoints *[]Point, pendingCurve *[]Point, tolerance float64) {
@@ -90,5 +88,4 @@ func appendPendingPoints(sets *[][]Point, currentPoints *[]Point, pendingCurve *
 		*sets = append(*sets, *currentPoints)
 		*currentPoints = []Point{}
 	}
-	return
 }

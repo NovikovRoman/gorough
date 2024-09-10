@@ -1,15 +1,16 @@
-package data_parser
+package tools
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestParsePath(t *testing.T) {
-	segments, err := ParsePath("M10 10 h 80 v 80 h -80 C Z")
+	_, err := ParsePath("M10 10 h 80 v 80 h -80 C Z")
 	require.NotNil(t, err)
 
-	segments, err = ParsePath(" M10 10 h 80 v 80 h -80 Z  ")
+	segments, err := ParsePath(" M10 10 h 80 v 80 h -80 Z  ")
 	require.Nil(t, err)
 	require.Equal(t, segments, []Segment{
 		{Key: "M", Data: []float64{10, 10}},
@@ -36,4 +37,21 @@ func TestSerialize(t *testing.T) {
 	segments, err = ParsePath(" M240,100c50,0,0,125,50,100s0,-125,50,-150s175,50,50,100s-175,50,-300,0s0,-125,50,-100s0,125,50,150s0,-100,50,-100")
 	require.Nil(t, err)
 	require.Equal(t, Serialize(Absolutize(segments)), "M 240 100 C 290 100, 240 225, 290 200 S 290 75, 340 50 S 515 100, 390 150 S 215 200, 90 150 S 90 25, 140 50 S 140 175, 190 200 S 190 100, 240 100")
+}
+
+func Benchmark_FloatToString(b *testing.B) {
+	tests := []float64{
+		1.4124,
+		100,
+		234234234.3,
+		123123.232,
+		2321.322123,
+		0.24144,
+		0.0,
+	}
+	for i := 0; i < b.N; i++ {
+		for _, test := range tests {
+			FloatToString(test)
+		}
+	}
 }

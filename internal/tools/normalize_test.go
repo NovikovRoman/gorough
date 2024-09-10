@@ -1,4 +1,4 @@
-package data_parser
+package tools
 
 import (
 	"github.com/stretchr/testify/require"

@@ -26,14 +26,14 @@ func (f *hatchFiller) setConnectEnds(b bool) {
 	f.connectEnds = b
 }
 
-func (f hatchFiller) fillPolygon(points []Point, opt *LineOptions) (op operation) {
+func (f hatchFiller) fillPolygon(points []Point, style Style, pen Pen, filler Filler) (op operation) {
 	fh := NewHachureFiller()
 	fh.SetAngle(f.hachureAngle)
 	fh.SetGap(f.hachureGap)
 	fh.setConnectEnds(f.connectEnds)
-	op = fh.fillPolygon(points, opt)
+	op = fh.fillPolygon(points, style, pen, filler)
 	fh.SetAngle(f.hachureAngle + 90)
-	op2 := fh.fillPolygon(points, opt)
+	op2 := fh.fillPolygon(points, style, pen, filler)
 	op.commands = append(op.commands, op2.commands...)
 	return
 }

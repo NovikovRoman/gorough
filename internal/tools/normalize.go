@@ -1,15 +1,16 @@
-package data_parser
+package tools
 
 import "math"
 
 func Normalize(segments []Segment) (out []Segment) {
 	lastType := ""
-	cx := float64(0)
-	cy := float64(0)
-	subx := float64(0)
-	suby := float64(0)
-	lcx := float64(0)
-	lcy := float64(0)
+	cx := 0.0
+	cy := 0.0
+	subx := 0.0
+	suby := 0.0
+	lcx := 0.0
+	lcy := 0.0
+	out = make([]Segment, 0, len(segments))
 
 	for _, s := range segments {
 		switch s.Key {
@@ -166,12 +167,11 @@ func rotate(x float64, y float64, angleRad float64) (resX float64, resY float64)
 
 func arcToCubicCurves(x1, y1, x2, y2, r1, r2, angle, largeArcFlag, sweepFlag float64, recursive ...float64) [][]float64 {
 	angleRad := degToRad(angle)
-	var params [][]float64
-	params = [][]float64{}
-	f1 := float64(0)
-	f2 := float64(0)
-	cx := float64(0)
-	cy := float64(0)
+	params := [][]float64{}
+	f1 := 0.0
+	f2 := 0.0
+	cx := 0.0
+	cy := 0.0
 	if len(recursive) > 0 {
 		f1 = recursive[0]
 		f2 = recursive[1]

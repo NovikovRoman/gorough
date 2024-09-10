@@ -1,9 +1,12 @@
 package main
 
 import (
-	"github.com/NovikovRoman/gorough"
-	"github.com/ajstarks/svgo"
+	"bufio"
+	"bytes"
 	"os"
+
+	"github.com/NovikovRoman/gorough"
+	svg "github.com/NovikovRoman/svgo"
 )
 
 func poligons() (err error) {
@@ -13,7 +16,7 @@ func poligons() (err error) {
 		{X: 100, Y: 100},
 		{X: 300, Y: 100},
 		{X: 60, Y: 200},
-	}, nil)
+	})
 
 	poligon2 := gorough.NewPoligon([]gorough.Point{
 		{X: 50, Y: 20},
@@ -21,28 +24,26 @@ func poligons() (err error) {
 		{X: 300, Y: 180},
 		{X: 280, Y: 30},
 		{X: 170, Y: 180},
-	}, &gorough.LineOptions{
-		Styles: &gorough.Styles{
+	},
+		gorough.PoligonStyle(gorough.Style{
 			Stroke: "#ff0000",
-		},
-	})
+		}),
+	)
 
-	var f *os.File
-	if f, err = os.Create("poligons.svg"); err != nil {
-		return
-	}
-	defer func() {
-		if derr := f.Close(); derr != nil {
-			err = derr
-		}
-	}()
+	var b bytes.Buffer
+	picSvg := bufio.NewWriter(&b)
 
 	width := 320
 	height := 220
-	canvas := svg.New(f)
+	canvas := svg.New(picSvg)
 	canvas.Start(width, height)
 	gorough.DrawSVG(canvas, poligon, nil)
 	gorough.DrawSVG(canvas, poligon2, nil)
 	canvas.End()
+
+	if err = picSvg.Flush(); err != nil {
+		return
+	}
+	err = os.WriteFile("poligons.svg", b.Bytes(), 0644)
 	return
 }

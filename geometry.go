@@ -56,17 +56,15 @@ func RotatePoints(points *[]Point, center Point, degrees float64) {
 		(*points)[i].X = ((p.X - center.X) * cos) - ((p.Y - center.Y) * sin) + center.X
 		(*points)[i].Y = ((p.X - center.X) * sin) + ((p.Y - center.Y) * cos) + center.Y
 	}
-	return
 }
 
 func RotateLines(lines *[]Line, center Point, degrees float64) {
 	for i := range *lines {
-		points := []Point{(*lines)[i].P1, (*lines)[i].P2}
-		RotatePoints(&points, center, degrees)
-		(*lines)[i].P1 = points[0]
-		(*lines)[i].P2 = points[1]
+		points := &[]Point{(*lines)[i].P1, (*lines)[i].P2}
+		RotatePoints(points, center, degrees)
+		(*lines)[i].P1 = (*points)[0]
+		(*lines)[i].P2 = (*points)[1]
 	}
-	return
 }
 
 func LineIntersection(a, b, c, d Point) (Point, bool) {
@@ -93,14 +91,13 @@ func IsPointInPolygon(points []Point, point Point) bool {
 		return false
 	}
 
-	extreme := Point{X: float64(int(^uint(0) >> 1)), Y: point.Y}
+	extreme := Point{X: math.MaxFloat64, Y: point.Y}
 	count := 0
 	for i := 0; i < vertices; i++ {
-		current := points[i]
 		next := points[(i+1)%vertices]
-		if DoIntersect(current, next, point, extreme) {
-			if orientation(current, point, next) == 0 {
-				return onSegment(current, point, next)
+		if DoIntersect(points[i], next, point, extreme) {
+			if orientation(points[i], point, next) == 0 {
+				return onSegment(points[i], point, next)
 			}
 			count++
 		}

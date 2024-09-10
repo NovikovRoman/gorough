@@ -1,9 +1,8 @@
-package data_parser
+package tools
 
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -18,10 +17,6 @@ var (
 	commandParams = map[string]int{
 		"A": 7, "a": 7, "C": 6, "c": 6, "H": 1, "h": 1, "L": 2, "l": 2, "M": 2, "m": 2, "Q": 4, "q": 4, "S": 4,
 		"s": 4, "T": 2, "t": 2, "V": 1, "v": 1, "Z": 0, "z": 0}
-
-	reGarbage = regexp.MustCompile(`(?s)^([ \t\r\n,]+)`)
-	reCommand = regexp.MustCompile(`(?s)^([aAcChHlLmMqQsStTvVzZ])`)
-	reNumber  = regexp.MustCompile(`(?s)^(([-+]?[0-9]+(\.[0-9]*)?|[-+]?\.[0-9]+)([eE][-+]?[0-9]+)?)`)
 )
 
 type pathToken struct {
@@ -68,13 +63,12 @@ func FloatToString(a float64) (res string) {
 	}
 
 	res = strconv.Itoa(int(a))
-	l := len(res)
-	if l > 3 {
-		l -= 3
-	} else {
-		l = 0
+	l := 0
+	if len(res) > 3 {
+		l = len(res) - 3
+		return strings.Join([]string{res[:l], res[l:]}, ".")
 	}
-	return res[:l] + "." + res[l:]
+	return "." + res
 }
 
 func (p pathToken) isType(t int) bool {
@@ -163,33 +157,49 @@ func Serialize(segments []Segment) string {
 }
 
 func tokenize(d string) (tokens []pathToken, err error) {
-	num := 0.0
-	for d != "" {
-		m := reGarbage.FindStringSubmatch(d)
-		if len(m) > 0 {
-			d = strings.Replace(d, m[1], "", 1)
+	runes := []rune(d)
+	for i := 0; i < len(runes); i++ {
+		if runes[i] == ' ' || runes[i] == '\t' || runes[i] == '\n' || runes[i] == '\r' || runes[i] == ',' {
 			continue
 		}
 
-		m = reCommand.FindStringSubmatch(d)
-		if len(m) > 0 {
-			tokens = append(tokens, pathToken{tokenType: Command, text: m[1]})
-			d = strings.Replace(d, m[1], "", 1)
+		s := string(runes[i])
+		if strings.ContainsAny(s, `AaCcHhLlMmQqSsTtVvZz`) {
+			tokens = append(tokens, pathToken{tokenType: Command, text: s})
 			continue
 		}
 
-		m = reNumber.FindStringSubmatch(d)
-		if len(m) > 0 {
-			if num, err = strconv.ParseFloat(m[1], 64); err != nil {
+		if runes[i] == '+' || runes[i] == '-' || runes[i] == '.' || runes[i] >= 48 && runes[i] <= 57 {
+			endIdx := i
+			for ii := i + 1; ii < len(runes); ii++ {
+				if runes[ii] >= 48 && runes[ii] <= 57 || runes[ii] == 'e' || runes[ii] == 'E' ||
+					runes[ii] == '.' || runes[ii] == '+' || runes[ii] == '-' {
+					endIdx = ii
+					continue
+				}
+				break
+			}
+
+			endIdx += 1
+			var sNum string
+			if endIdx == len(runes) {
+				sNum = string(runes[i:])
+			} else {
+				sNum = string(runes[i:endIdx])
+			}
+
+			var num float64
+			if num, err = strconv.ParseFloat(sNum, 64); err != nil {
 				err = fmt.Errorf("%s: %s", err, d)
 				return
 			}
-			tokens = append(tokens, pathToken{tokenType: Number, text: m[1], number: num})
-			d = strings.Replace(d, m[1], "", 1)
+
+			tokens = append(tokens, pathToken{tokenType: Number, text: sNum, number: num})
+			i = endIdx - 1
 			continue
 		}
 
-		err = errors.New("Unknown error: " + d)
+		err = fmt.Errorf("Unknown error: symbol %d in %s", i, d)
 		return
 	}
 

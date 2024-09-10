@@ -44,8 +44,8 @@ func (f *hachureFiller) setConnectEnds(b bool) {
 	f.connectEnds = b
 }
 
-func (f hachureFiller) fillPolygon(points []Point, opt *LineOptions) operation {
-	lines := polygonHachureLines(points, f.hachureAngle, f.hachureGap, opt)
+func (f hachureFiller) fillPolygon(points []Point, style Style, pen Pen, filler Filler) operation {
+	lines := polygonHachureLines(points, f.hachureAngle, f.hachureGap, style.StrokeWidth)
 	if f.connectEnds {
 		connectingLines := f.connectingLines(points, lines)
 		lines = append(lines, connectingLines...)
@@ -53,13 +53,13 @@ func (f hachureFiller) fillPolygon(points []Point, opt *LineOptions) operation {
 
 	return operation{
 		code:     operationFillSketch,
-		commands: f.renderLines(lines, opt),
+		commands: f.renderLines(lines, pen),
 	}
 }
 
-func (f hachureFiller) renderLines(lines []Line, opt *LineOptions) (commands []command) {
+func (f hachureFiller) renderLines(lines []Line, pen Pen) (commands []command) {
 	for _, line := range lines {
-		commands = append(commands, doubleLine(line.P1, line.P2, opt.PenOptions)...)
+		commands = append(commands, doubleLine(line.P1, line.P2, pen)...)
 	}
 	return commands
 }
@@ -77,8 +77,7 @@ func (f hachureFiller) connectingLines(polygon []Point, lines []Line) (result []
 			continue
 		}
 
-		current := lines[i]
-		segment := Line{P1: current.P1, P2: prev.P2}
+		segment := Line{P1: lines[i].P1, P2: prev.P2}
 		if segment.length() > 3 {
 			result = append(result, f.splitOnIntersections(polygon, segment)...)
 		}
@@ -87,12 +86,8 @@ func (f hachureFiller) connectingLines(polygon []Point, lines []Line) (result []
 }
 
 func (f hachureFiller) splitOnIntersections(polygon []Point, segment Line) []Line {
-	var (
-		intersections []intersectionInfo
-		slines        []Line
-	)
-	err := math.Max(5, segment.length()*0.1)
-	intersections = []intersectionInfo{}
+	distanceErr := math.Max(5, segment.length()*0.1)
+	intersections := []intersectionInfo{}
 
 	for i := 0; i < len(polygon); i++ {
 		p1 := polygon[i]
@@ -103,7 +98,7 @@ func (f hachureFiller) splitOnIntersections(polygon []Point, segment Line) []Lin
 				distance := Line{P1: ip, P2: segment.P1}.length()
 				distance2 := Line{P1: ip, P2: segment.P2}.length()
 
-				if distance > err && distance2 > err {
+				if distance > distanceErr && distance2 > distanceErr {
 					intersections = append(intersections, intersectionInfo{
 						point:    ip,
 						distance: distance,
@@ -140,11 +135,9 @@ func (f hachureFiller) splitOnIntersections(polygon []Point, segment Line) []Lin
 		}
 
 		spoints := []Point{segment.P1}
-		for _, i := range ips {
-			spoints = append(spoints, i)
-		}
+		spoints = append(spoints, ips...)
 		spoints = append(spoints, segment.P2)
-		slines = []Line{}
+		slines := []Line{}
 		for i := 0; i < (len(spoints) - 1); i += 2 {
 			subSegment := Line{
 				P1: spoints[i],
