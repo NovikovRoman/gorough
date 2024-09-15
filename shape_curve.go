@@ -77,7 +77,7 @@ func NewCurve(points []Point, opts ...curveOpt) (c curve) {
 
 	outline := curveOperation(points, c.curveOpt, c.pen)
 
-	if c.style.Fill != None && len(points) >= 3 {
+	if c.style.Fill != none && len(points) >= 3 {
 		// It does not check the error, because the number of points has already been checked
 		bcurve, _ := CurveToBezier(points, 0)
 		polyPoints := PointsOnBezierCurves(bcurve, 10, (1+c.pen.Roughness)/2)
@@ -90,7 +90,7 @@ func NewCurve(points []Point, opts ...curveOpt) (c curve) {
 		}
 	}
 
-	if c.style.Stroke != None {
+	if c.style.Stroke != none {
 		c.operations = append(c.operations, outline)
 	}
 	return

@@ -79,7 +79,7 @@ func NewRect(p Point, width, height float64, opts ...rectOpt) rect {
 		}
 	}
 
-	if r.style.Stroke != None {
+	if r.style.Stroke != none {
 		r.operations = append(r.operations, outline)
 	}
 	return r

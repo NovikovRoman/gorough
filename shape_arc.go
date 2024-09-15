@@ -82,7 +82,7 @@ func NewArc(center Point, width, height, start, stop float64, closed bool, opts 
 	if closed && a.style.Fill != "" {
 		if a.filler == nil {
 			s := arcOperation(center, width, height, start, stop, true, false, a.curveOpt, a.pen)
-			s.code = operationFillPath
+			s.code = opFillPath
 			a.operations = append(a.operations, s)
 
 		} else {
@@ -90,7 +90,7 @@ func NewArc(center Point, width, height, start, stop float64, closed bool, opts 
 		}
 	}
 
-	if a.style.Stroke != None {
+	if a.style.Stroke != none {
 		a.operations = append(a.operations, outline)
 	}
 	return

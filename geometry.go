@@ -2,6 +2,7 @@ package gorough
 
 import (
 	"math"
+	"math/rand/v2"
 )
 
 type Point struct {
@@ -186,4 +187,12 @@ func flatness(points []Point, offset int) float64 {
 	}
 
 	return ux + uy
+}
+
+func offsetOpt(x float64, roughness float64, roughnessGain float64) float64 {
+	return offset(-x, x, roughness, roughnessGain)
+}
+
+func offset(min float64, max float64, roughness float64, roughnessGain float64) float64 {
+	return roughness * roughnessGain * ((rand.Float64() * (max - min)) + min)
 }

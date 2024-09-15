@@ -51,10 +51,7 @@ func (f hachureFiller) fillPolygon(points []Point, style Style, pen Pen, filler 
 		lines = append(lines, connectingLines...)
 	}
 
-	return operation{
-		code:     operationFillSketch,
-		commands: f.renderLines(lines, pen),
-	}
+	return operationFillSketch(f.renderLines(lines, pen))
 }
 
 func (f hachureFiller) renderLines(lines []Line, pen Pen) (commands []command) {

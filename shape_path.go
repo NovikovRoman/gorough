@@ -87,7 +87,7 @@ func NewPath(d string, opts ...pathOpt) (p path, err error) {
 		return
 	}
 
-	hasFill := p.style.Fill != None && p.style.Fill != "transparent"
+	hasFill := p.style.Fill != none && p.style.Fill != "transparent"
 	if (!hasFill || p.style.Stroke != "") && p.style.StrokeWidth == 0 {
 		p.style.StrokeWidth = 1
 	}
@@ -111,7 +111,7 @@ func NewPath(d string, opts ...pathOpt) (p path, err error) {
 		p.fill(points)
 	}
 
-	if p.style.Stroke != None {
+	if p.style.Stroke != none {
 		if simplified {
 			for _, pp := range points {
 				p.operations = append(p.operations, linearPathOperation(pp, false, p.pen))

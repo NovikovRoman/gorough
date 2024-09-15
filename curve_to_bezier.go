@@ -11,6 +11,7 @@ func CurveToBezier(pointsIn []Point, curveTightness float64) (out []Point, err e
 	}
 
 	if len(pointsIn) == 3 {
+		out = make([]Point, 0, 4)
 		out = append(out, pointsIn[0])
 		out = append(out, pointsIn[1])
 		out = append(out, pointsIn[2])
@@ -18,7 +19,9 @@ func CurveToBezier(pointsIn []Point, curveTightness float64) (out []Point, err e
 		return
 	}
 
-	points := []Point{pointsIn[0], pointsIn[1]}
+	points := make([]Point, 0, len(pointsIn)+1)
+	points = append(points, pointsIn[0])
+	points = append(points, pointsIn[1])
 	for i := 1; i < len(pointsIn); i++ {
 		points = append(points, pointsIn[i])
 		if i == len(pointsIn)-1 {
@@ -47,6 +50,5 @@ func CurveToBezier(pointsIn []Point, curveTightness float64) (out []Point, err e
 
 		out = append(out, b[1], b[2], b[3])
 	}
-
 	return
 }

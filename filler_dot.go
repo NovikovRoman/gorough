@@ -72,8 +72,5 @@ func (f dotFiller) dotsOnLines(lines []Line, filler Filler, style Style, pen Pen
 		}
 	}
 
-	return operation{
-		code:     operationFillSketch,
-		commands: commands,
-	}
+	return operationFillSketch(commands)
 }

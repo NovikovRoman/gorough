@@ -36,10 +36,7 @@ func (f *dashedFiller) setConnectEnds(b bool) {
 
 func (f dashedFiller) fillPolygon(points []Point, style Style, pen Pen, filler Filler) operation {
 	lines := polygonHachureLines(points, f.hachureAngle, f.hachureGap, style.StrokeWidth)
-	return operation{
-		code:     operationFillSketch,
-		commands: f.dashedLine(lines, style.StrokeWidth, pen),
-	}
+	return operationFillSketch(f.dashedLine(lines, style.StrokeWidth, pen))
 }
 
 func (f dashedFiller) dashedLine(lines []Line, strokeWidth float64, pen Pen) (commands []command) {

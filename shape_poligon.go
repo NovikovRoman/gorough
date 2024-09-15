@@ -77,7 +77,7 @@ func NewPoligon(points []Point, opts ...poligonOpt) poligon {
 		}
 	}
 
-	if p.style.Stroke != None {
+	if p.style.Stroke != none {
 		p.operations = append(p.operations, outline)
 	}
 	return p
