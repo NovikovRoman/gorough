@@ -31,14 +31,14 @@ func lineOperations(p1 Point, p2 Point, pen Pen) []operation {
 }
 
 func doubleLine(p1 Point, p2 Point, pen Pen) (commands []command) {
-	commands = []command{} //make([]command, 0, 4)
+	commands = make([]command, 0, 4)
 	commands = append(commands, oneLine(p1, p2, true, false, pen)...)
 	commands = append(commands, oneLine(p1, p2, true, true, pen)...)
 	return
 }
 
 func oneLine(p1 Point, p2 Point, move bool, overlay bool, pen Pen) (commands []command) {
-	commands = []command{} // make([]command, 0, 2)
+	commands = make([]command, 0, 2)
 
 	lengthSq := math.Pow(p1.X-p2.X, 2) + math.Pow(p1.Y-p2.Y, 2)
 	length := math.Sqrt(lengthSq)
